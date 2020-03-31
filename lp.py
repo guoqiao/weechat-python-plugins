@@ -18,10 +18,6 @@ def log(message, buffer=''):
     weechat.prnt(buffer, '{}: {}'.format(NAME, message))
 
 
-def log_current(message):
-    log(message, buffer=weechat.current_buffer())
-
-
 if VERBOSE:
     def verbose(message):
         log(message)
@@ -106,5 +102,5 @@ def main(data, buffer, args):
     cli = parser.parse_args(args=args)
     for id_ in cli.ids:
         url = 'https://launchpad.net/bugs/{}'.format(id_)
-        log_current(url)
+        log(url, buffer=buffer)
     return weechat.WEECHAT_RC_OK
