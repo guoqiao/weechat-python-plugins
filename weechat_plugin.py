@@ -3,8 +3,6 @@ import shlex
 import argparse
 import weechat
 
-VERBOSE = False
-
 
 class WeeChatPlugin(argparse.ArgumentParser):
 
@@ -14,12 +12,14 @@ class WeeChatPlugin(argparse.ArgumentParser):
             author='guoqiao',
             version='0.1',
             license='MIT',
+            verbose=False,
             **kwargs):
 
         if not kwargs.get('formatter_class'):
             kwargs['formatter_class'] = argparse.ArgumentDefaultsHelpFormatter
 
         super().__init__(*args, **kwargs)
+        self._verbose = verbose
 
         weechat.register(
             self.prog,
@@ -35,9 +35,10 @@ class WeeChatPlugin(argparse.ArgumentParser):
         if message:
             weechat.prnt(buffer, '{}'.format(message))
 
-    def verbose(self, message):
-        if VERBOSE:
-            self.prnt(message)
+    def verbose(self, message, buffer=''):
+        """print message when verbose is on"""
+        if self._verbose:
+            self.prnt(message, buffer=buffer)
 
     def _print_message(self, message, file=None):
         """print message to core buffer.
