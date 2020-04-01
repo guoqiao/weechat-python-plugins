@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-import weechat
-from weechat_plugin import WeeChatPlugin
+from weechat_plugin import WeeChatPlugin, return_on_exit
 
 NAME = 'qc'
 DESC = 'quick config for weechat'
@@ -35,26 +34,19 @@ parser.add_argument(
 parser.hook_command('main')
 
 
+@return_on_exit
 def main(data, buffer, args):
-    try:
-        cli = parser.parse_args(args=args, buffer=buffer)
-        option = OPTION_ALIASES.get(cli.option, cli.option)
-        current_str = parser.get_option_str(option)
-        parser.prnt('current: {} = {}'.format(option, current_str))
+    cli = parser.parse_args(args=args, buffer=buffer)
+    option = OPTION_ALIASES.get(cli.option, cli.option)
+    current_str = parser.get_option_str(option)
+    parser.prnt('current: {} = {}'.format(option, current_str))
 
-        current = set(current_str.split(','))
-        add = set(cli.add)
-        rm = set(cli.rm)
-        final = (current | add) - rm
+    current = set(current_str.split(','))
+    add = set(cli.add)
+    rm = set(cli.rm)
+    final = (current | add) - rm
 
-        if final != current:
-            final_str = ','.join(sorted(final))
-            parser.prnt('final: {} = {}'.format(option, final_str))
-            parser.set_option(option, final_str)
-        return weechat.WEECHAT_RC_OK
-    except SystemExit as exc:
-        # catch sys.exit from parse_args and return proper code for weechat
-        return exc.code
-    except Exception as exc:
-        parser.prnt(exc)
-        return weechat.WEECHAT_RC_ERROR
+    if final != current:
+        final_str = ','.join(sorted(final))
+        parser.prnt('final: {} = {}'.format(option, final_str))
+        parser.set_option(option, final_str)
