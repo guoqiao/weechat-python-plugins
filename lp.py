@@ -17,6 +17,8 @@ class WeeChatPlugin(argparse.ArgumentParser):
 
     def __init__(self, *args, **kwargs):
         weechat.register(NAME, AUTHOR, VERSION, LICENCE, DESC, "", "")
+        if not kwargs.get('formatter_class'):
+            kwargs['formatter_class'] = argparse.ArgumentDefaultsHelpFormatter
         super().__init__(*args, **kwargs)
 
     def prnt(self, message, buffer=''):
@@ -81,7 +83,6 @@ class WeeChatPlugin(argparse.ArgumentParser):
 
 parser = WeeChatPlugin(
     prog=NAME,
-    formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     description=DESC,
 )
 
