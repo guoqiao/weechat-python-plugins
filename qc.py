@@ -59,6 +59,9 @@ def main(data, buffer, args):
         remove_set = set(cli.remove)
         expected_set = (current_set | add_set) - remove_set
         expected = ','.join(sorted(expected_set))
+        if option == 'aj' or 'autojoin' in option:
+            for channel in add_set:
+                parser.cmd('/join {}'.format(channel))
 
     if expected is not None and expected != current:
         parser.prnt('expected: {} = "{}"'.format(option, expected))
