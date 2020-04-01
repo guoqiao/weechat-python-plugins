@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
+from os.path import basename
 from weechat_plugin import WeeChatPlugin, weechat_plugin_return_code
 
-NAME = 'lp'
 DESC = 'print url for launchpad bug in buffer(only visible to you)'
 
+# get plugin name from file basename and remove extension
+NAME = basename(__file__).rsplit('.', maxsplit=1)[0]
 
 parser = WeeChatPlugin(
     prog=NAME,

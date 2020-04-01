@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
+from os.path import basename
 from weechat_plugin import WeeChatPlugin, weechat_plugin_return_code
 
-NAME = 'sf'
 DESC = 'print bootstack portal url for salesforce case in buffer(only visible to you)'
 
+# get plugin name from file basename and remove extension
+NAME = basename(__file__).rsplit('.', maxsplit=1)[0]
 
 parser = WeeChatPlugin(
     prog=NAME,
