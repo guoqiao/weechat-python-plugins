@@ -2,7 +2,7 @@
 from weechat_plugin import WeeChatPlugin, return_on_exit
 
 NAME = 'lp'
-DESC = 'print url for launchpad bug in buffer'
+DESC = 'print url for launchpad bug in buffer(only visible to you)'
 
 
 parser = WeeChatPlugin(

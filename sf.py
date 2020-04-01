@@ -2,7 +2,7 @@
 from weechat_plugin import WeeChatPlugin, return_on_exit
 
 NAME = 'sf'
-DESC = 'print bootstack portal url for salesforce case in buffer'
+DESC = 'print bootstack portal url for salesforce case in buffer(only visible to you)'
 
 
 parser = WeeChatPlugin(
