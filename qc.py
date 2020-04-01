@@ -60,12 +60,12 @@ parser.hook_command('main')
 @weechat_plugin_return_code
 def main(data, buffer, args):
     cli = parser.parse_args(args=args, buffer=buffer)
-    server = cli.server
+    parser.server = cli.server
 
     if cli.highlight:
         option = OPTION_HIGHLIGHT
     elif cli.autojoin:
-        option = OPTION_SERVER_AUTOJOIN.format(server=server)
+        option = OPTION_SERVER_AUTOJOIN.format(server=cli.server)
     else:
         option = cli.option
 
