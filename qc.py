@@ -30,8 +30,13 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    '-r', '--rm', metavar='KW', nargs='+', default=[],
+    '-r', '--remove', metavar='KW', nargs='+', default=[],
     help='rm keyword from option value, can repeat',
+)
+
+parser.add_argument(
+    '-s', '--set', metavar='VALUE',
+    help='set option to this value',
 )
 
 parser.hook_command('main')
@@ -41,15 +46,20 @@ parser.hook_command('main')
 def main(data, buffer, args):
     cli = parser.parse_args(args=args, buffer=buffer)
     option = OPTION_ALIASES.get(cli.option, cli.option)
-    current_str = parser.get_option_str(option)
-    parser.prnt('current: {} = {}'.format(option, current_str))
+    current = parser.get_option_str(option)
+    parser.prnt('current: {} = "{}"'.format(option, current))
 
-    current = set(current_str.split(','))
-    add = set(cli.add)
-    rm = set(cli.rm)
-    final = (current | add) - rm
+    expected = None
 
-    if final != current:
-        final_str = ','.join(sorted(final))
-        parser.prnt('final: {} = {}'.format(option, final_str))
-        parser.set_option(option, final_str)
+    if cli.set is not None:
+        expected = cli.set
+    else:
+        current_set = set(current.split(','))
+        add_set = set(cli.add)
+        remove_set = set(cli.remove)
+        expected_set = (current_set | add_set) - remove_set
+        expected = ','.join(sorted(expected_set))
+
+    if expected is not None and expected != current:
+        parser.prnt('expected: {} = "{}"'.format(option, expected))
+        parser.set_option(option, expected)
