@@ -1,6 +1,6 @@
 # WeeChat Python Plugins
 
-WeeChat Python Scripts Utils and Collection
+WeeChat Python Plugins Collection and Utils based on argparse module.
 
 ## usage
 
@@ -9,6 +9,7 @@ WeeChat Python Scripts Utils and Collection
 
 To enable autoload for a plugin:
 
+    cd autoload/
     ln -s ../xx.py .
 
 Then in core buffer `weechat`:
