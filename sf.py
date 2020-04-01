@@ -21,10 +21,10 @@ parser.hook_command('main')
 
 def main(data, buffer, args):
     try:
-        cli = parser.parse_args(args=args)
+        cli = parser.parse_args(args=args, buffer=buffer)
         for id_ in cli.ids:
             url = 'https://portal.admin.canonical.com/bootstack/cases/{}'.format(id_)
-            parser.prnt(url, buffer=buffer)
+            parser.prnt(url)
         return weechat.WEECHAT_RC_OK
     except SystemExit as exc:
         # catch sys.exit from parse_args and return proper code for weechat
