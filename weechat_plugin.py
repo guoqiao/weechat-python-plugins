@@ -67,7 +67,6 @@ class WeeChatPlugin(argparse.ArgumentParser):
             args = shlex.split(args)
         cli = super().parse_args(args=args, namespace=namespace)
         self._verbose = cli.verbose
-        self.server = cli.server
         return cli
 
     def hook_command(self, hook_func_name):
