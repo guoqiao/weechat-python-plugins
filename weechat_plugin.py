@@ -19,6 +19,8 @@ class WeeChatPlugin(argparse.ArgumentParser):
 
         super().__init__(*args, **kwargs)
 
+        self.buffer = ''  # core buffer by default
+
         # add verbose option for all
         self.add_argument(
             '-v', '--verbose', action='store_true',
@@ -35,14 +37,14 @@ class WeeChatPlugin(argparse.ArgumentParser):
             "",  # charset, default to UTF-8
         )
 
-    def prnt(self, message, buffer=''):
+    def prnt(self, message):
         if message:
-            weechat.prnt(buffer, '{}'.format(message))
+            weechat.prnt(self.buffer, '{}'.format(message))
 
-    def verbose(self, message, buffer=''):
+    def verbose(self, message):
         """print message when verbose is on"""
         if self._verbose:
-            self.prnt(message, buffer=buffer)
+            self.prnt(message)
 
     def _print_message(self, message, file=None):
         """print message to core buffer.
@@ -62,8 +64,9 @@ class WeeChatPlugin(argparse.ArgumentParser):
             status = weechat.WEECHAT_RC_ERROR
         super().exit(status=status, message=message)
 
-    def parse_args(self, args=None, namespace=None):
+    def parse_args(self, args=None, namespace=None, buffer=''):
         """convert str args to argv list"""
+        self.buffer = buffer
         if args and isinstance(args, str):
             # --option "I have space" --> ["option", "I have space"]
             args = shlex.split(args)
