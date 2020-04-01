@@ -42,6 +42,7 @@ class WeeChatPlugin(argparse.ArgumentParser):
             weechat.prnt(self.buffer, '{}'.format(message))
 
     def cmd(self, cmd):
+        self.verbose(cmd)
         weechat.command(self.buffer, cmd)
 
     def verbose(self, message):
