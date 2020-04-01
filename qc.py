@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from weechat_plugin import WeeChatPlugin, return_on_exit
+from weechat_plugin import WeeChatPlugin, weechat_plugin_return_code
 
 NAME = 'qc'
 DESC = 'quick config for weechat'
@@ -34,7 +34,7 @@ parser.add_argument(
 parser.hook_command('main')
 
 
-@return_on_exit
+@weechat_plugin_return_code
 def main(data, buffer, args):
     cli = parser.parse_args(args=args, buffer=buffer)
     option = OPTION_ALIASES.get(cli.option, cli.option)

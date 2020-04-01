@@ -99,7 +99,7 @@ class WeeChatPlugin(argparse.ArgumentParser):
         return weechat.config_string(self.get_option(option))
 
 
-def return_on_exit(func):
+def weechat_plugin_return_code(func):
     def hook_command(data, buffer, args):
         try:
             # if func doesn't return anything, return ok for it

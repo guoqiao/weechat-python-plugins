@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from weechat_plugin import WeeChatPlugin, return_on_exit
+from weechat_plugin import WeeChatPlugin, weechat_plugin_return_code
 
 NAME = 'sf'
 DESC = 'print bootstack portal url for salesforce case in buffer(only visible to you)'
@@ -18,7 +18,7 @@ parser.add_argument(
 parser.hook_command('main')
 
 
-@return_on_exit
+@weechat_plugin_return_code
 def main(data, buffer, args):
     cli = parser.parse_args(args=args, buffer=buffer)
     for id_ in cli.ids:
