@@ -38,17 +38,16 @@ class WeeChatPlugin(argparse.ArgumentParser):
         )
 
     def prnt(self, message):
-        if message:
-            weechat.prnt(self.buffer, '{}'.format(message))
-
-    def cmd(self, cmd):
-        self.verbose(cmd)
-        weechat.command(self.buffer, cmd)
+        weechat.prnt(self.buffer, '{}'.format(message))
 
     def verbose(self, message):
         """print message when verbose is on"""
         if self._verbose:
             self.prnt(message)
+
+    def cmd(self, cmd):
+        self.verbose(cmd)
+        weechat.command(self.buffer, cmd)
 
     def _print_message(self, message, file=None):
         """print message to core buffer.
@@ -98,6 +97,7 @@ class WeeChatPlugin(argparse.ArgumentParser):
 
 def weechat_plugin_return_code(func):
     def hook_command(data, buffer, args):
+        """decorator to help hook with weechat return code"""
         try:
             # if func doesn't return anything, return ok for it
             return func(data, buffer, args) or weechat.WEECHAT_RC_OK
