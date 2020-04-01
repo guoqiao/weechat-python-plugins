@@ -41,6 +41,9 @@ class WeeChatPlugin(argparse.ArgumentParser):
         if message:
             weechat.prnt(self.buffer, '{}'.format(message))
 
+    def cmd(self, cmd):
+        weechat.command(self.buffer, cmd)
+
     def verbose(self, message):
         """print message when verbose is on"""
         if self._verbose:
