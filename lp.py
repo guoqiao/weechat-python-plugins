@@ -8,7 +8,6 @@ import weechat
 NAME = 'lp'
 DESC = 'print url for launchpad bug'
 
-SERVER = 'canonical'
 VERBOSE = False
 
 weechat.register(NAME, "guoqiao", "20200401", "MIT", DESC, "", "")
