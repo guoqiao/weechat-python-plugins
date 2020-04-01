@@ -60,14 +60,6 @@ class WeeChatPlugin(argparse.ArgumentParser):
         """
         self.prnt(message)
 
-    def exit(self, status=0, message=None):
-        """convert exit code"""
-        if status == 0:
-            status = weechat.WEECHAT_RC_OK
-        else:
-            status = weechat.WEECHAT_RC_ERROR
-        super().exit(status=status, message=message)
-
     def parse_args(self, args=None, namespace=None, buffer=''):
         """convert str args to argv list"""
         self.buffer = buffer
@@ -111,7 +103,10 @@ def weechat_plugin_return_code(func):
             return func(data, buffer, args) or weechat.WEECHAT_RC_OK
         except SystemExit as exc:
             # catch sys.exit from parse_args and return proper code for weechat
-            return exc.code
+            if exc.code == 0:
+                return weechat.WEECHAT_RC_OK
+            else:
+                return weechat.WEECHAT_RC_ERROR
         except Exception as exc:
             # catch any other exception from python and print error to buffer
             weechat.prnt(buffer, str(exc))
