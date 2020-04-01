@@ -12,14 +12,18 @@ class WeeChatPlugin(argparse.ArgumentParser):
             author='guoqiao',
             version='0.1',
             license='MIT',
-            verbose=False,
             **kwargs):
 
         if not kwargs.get('formatter_class'):
             kwargs['formatter_class'] = argparse.ArgumentDefaultsHelpFormatter
 
         super().__init__(*args, **kwargs)
-        self._verbose = verbose
+
+        # add verbose option for all
+        self.add_argument(
+            '-v', '--verbose', action='store_true',
+            help='Be verbose',
+        )
 
         weechat.register(
             self.prog,
@@ -63,7 +67,9 @@ class WeeChatPlugin(argparse.ArgumentParser):
         if args and isinstance(args, str):
             # --option "I have space" --> ["option", "I have space"]
             args = shlex.split(args)
-        return super().parse_args(args=args, namespace=namespace)
+        cli = super().parse_args(args=args, namespace=namespace)
+        self._verbose = cli.verbose
+        return cli
 
     def hook_command(self, hook_func_name):
         weechat.hook_command(
