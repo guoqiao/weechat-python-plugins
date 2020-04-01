@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import sys
 import shlex
 import argparse
 import weechat
@@ -54,13 +53,11 @@ class WeeChatPlugin(argparse.ArgumentParser):
 
     def exit(self, status=0, message=None):
         """convert exit code"""
-        if message:
-            self._print_message(message)
         if status == 0:
-            code = weechat.WEECHAT_RC_OK
+            status = weechat.WEECHAT_RC_OK
         else:
-            code = weechat.WEECHAT_RC_ERROR
-        sys.exit(code)
+            status = weechat.WEECHAT_RC_ERROR
+        super().exit(status=status, message=message)
 
     def parse_args(self, args=None, namespace=None):
         """convert str args to argv list"""
