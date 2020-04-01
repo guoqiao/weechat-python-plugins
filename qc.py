@@ -24,13 +24,13 @@ parser = WeeChatPlugin(
 )
 
 parser.add_argument(
-    '-o', '--option', default=OPTION_HIGHLIGHT,
-    help='target option',
+    '-s', '--server', default=SERVER,
+    help='irc server to config',
 )
 
 parser.add_argument(
-    '-S', '--server', default=SERVER,
-    help='irc server to config',
+    '-o', '--option', default=OPTION_HIGHLIGHT,
+    help='target option',
 )
 
 parser.add_argument(
@@ -44,19 +44,20 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    '-a', '--add', metavar='KW', nargs='+', default=[],
-    help='add keyword to option value, can repeat',
+    '-a', '--add', action='store_true',
+    help='add items to option value',
 )
 
 parser.add_argument(
-    '-r', '--remove', metavar='KW', nargs='+', default=[],
-    help='rm keyword from option value, can repeat',
+    '-r', '--remove', action='store_true',
+    help='remove items from option value',
 )
 
 parser.add_argument(
-    '-s', '--set', metavar='VALUE',
-    help='set option to this value',
+    'items', metavar='ITEM', nargs='*', default=[],
+    help='item for this option, can repeat',
 )
+
 
 parser.hook_command('main')
 
@@ -76,21 +77,17 @@ def main(data, buffer, args):
     current = parser.get_option_str(option)
     parser.prnt('current: {} = "{}"'.format(option, current))
 
-    expected = None
+    current_set = set(current.split(','))
+    items_set = set(cli.items)
 
-    if cli.set is not None:
-        expected = cli.set
+    if cli.add:
+        expected_set = current_set | items_set
+    elif cli.remove:
+        expected_set = current_set - items_set
     else:
-        current_set = set(current.split(','))
-        add_set = set(cli.add)
-        remove_set = set(cli.remove)
-        expected_set = (current_set | add_set) - remove_set
-        expected = ','.join(sorted(expected_set))
-        if buffer and ('autojoin' in option):
-            for channel in add_set:
-                # /join only works in server, channel or private
-                parser.cmd('/join {}'.format(channel))
+        expected_set = current_set
 
-    if expected is not None and expected != current:
+    if current_set != expected_set:
+        expected = ','.join(sorted(expected_set))
         parser.prnt('expected: {} = "{}"'.format(option, expected))
         parser.set_option(option, expected)
