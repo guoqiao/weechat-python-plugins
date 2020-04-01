@@ -6,20 +6,33 @@ import weechat
 
 NAME = 'lp'
 DESC = 'print url for launchpad bug'
-AUTHOR = 'guoqiao'
-VERSION = '20200401'
-LICENCE = 'MIT'
-
 VERBOSE = False
 
 
 class WeeChatPlugin(argparse.ArgumentParser):
 
-    def __init__(self, *args, **kwargs):
-        weechat.register(NAME, AUTHOR, VERSION, LICENCE, DESC, "", "")
+    def __init__(
+            self,
+            *args,
+            author='guoqiao',
+            version='v0.1',
+            license='MIT',
+            **kwargs):
+
         if not kwargs.get('formatter_class'):
             kwargs['formatter_class'] = argparse.ArgumentDefaultsHelpFormatter
+
         super().__init__(*args, **kwargs)
+
+        weechat.register(
+            self.prog,
+            author,
+            version,
+            license,
+            self.description,
+            "",  # shutdown_function name, called when script is unloaded
+            "",  # charset, default to UTF-8
+        )
 
     def prnt(self, message, buffer=''):
         if message:
@@ -58,7 +71,7 @@ class WeeChatPlugin(argparse.ArgumentParser):
 
     def hook_command(self, hook_func_name):
         weechat.hook_command(
-            NAME,
+            self.prog,
             self.description,
             '',  # usage, included in help, no need to repeat
             self.format_help(),
