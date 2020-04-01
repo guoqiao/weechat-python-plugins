@@ -7,11 +7,6 @@ DESC = 'quick config for weechat'
 # get plugin name from file basename and remove extension
 NAME = basename(__file__).rsplit('.', maxsplit=1)[0]
 SERVER = 'canonical'
-OPTION_ALIASES = {
-    'hl': 'weechat.look.highlight',
-    'aj': 'irc.server.{}.autojoin'.format(SERVER),
-}
-OPTION_ALIASES_HELP = ', '.join('{} -> {}'.format(k, v) for k, v in OPTION_ALIASES.items())
 
 OPTION_HIGHLIGHT = 'weechat.look.highlight'
 OPTION_SERVER_NICKS = 'irc.server.{server}.nicks'
