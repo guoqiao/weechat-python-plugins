@@ -13,6 +13,10 @@ OPTION_ALIASES = {
 }
 OPTION_ALIASES_HELP = ', '.join('{} -> {}'.format(k, v) for k, v in OPTION_ALIASES.items())
 
+OPTION_HIGHLIGHT = 'weechat.look.highlight'
+OPTION_SERVER_NICKS = 'irc.server.{server}.nicks'
+OPTION_SERVER_AUTOJOIN = 'irc.server.{server}.autojoin'
+
 
 parser = WeeChatPlugin(
     prog=NAME,
@@ -20,8 +24,23 @@ parser = WeeChatPlugin(
 )
 
 parser.add_argument(
-    '-o', '--option', default='hl',
-    help='target option, support alias: {}'.format(OPTION_ALIASES_HELP),
+    '-o', '--option', default=OPTION_HIGHLIGHT,
+    help='target option',
+)
+
+parser.add_argument(
+    '-S', '--server', default=SERVER,
+    help='irc server to config',
+)
+
+parser.add_argument(
+    '--hl', dest='highlight', action='store_true',
+    help='shortcut for --option {}'.format(OPTION_HIGHLIGHT),
+)
+
+parser.add_argument(
+    '--aj', dest='autojoin', action='store_true',
+    help='shortcut for --option {}'.format(OPTION_SERVER_AUTOJOIN),
 )
 
 parser.add_argument(
@@ -45,7 +64,15 @@ parser.hook_command('main')
 @weechat_plugin_return_code
 def main(data, buffer, args):
     cli = parser.parse_args(args=args, buffer=buffer)
-    option = OPTION_ALIASES.get(cli.option, cli.option)
+    server = cli.server
+
+    if cli.highlight:
+        option = OPTION_HIGHLIGHT
+    elif cli.autojoin:
+        option = OPTION_SERVER_AUTOJOIN.format(server=server)
+    else:
+        option = cli.option
+
     current = parser.get_option_str(option)
     parser.prnt('current: {} = "{}"'.format(option, current))
 
