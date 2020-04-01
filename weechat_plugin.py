@@ -97,3 +97,18 @@ class WeeChatPlugin(argparse.ArgumentParser):
 
     def get_option_str(self, option):
         return weechat.config_string(self.get_option(option))
+
+
+def return_on_exit(func):
+    def hook_command(data, buffer, args):
+        try:
+            # if func doesn't return anything, return ok for it
+            return func(data, buffer, args) or weechat.WEECHAT_RC_OK
+        except SystemExit as exc:
+            # catch sys.exit from parse_args and return proper code for weechat
+            return exc.code
+        except Exception as exc:
+            # catch any other exception from python and print error to buffer
+            weechat.prnt(buffer, str(exc))
+            return weechat.WEECHAT_RC_ERROR
+    return hook_command
