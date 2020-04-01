@@ -14,7 +14,7 @@ weechat.register(NAME, "guoqiao", "20200401", "MIT", DESC, "", "")
 
 
 def log(message, buffer=''):
-    weechat.prnt(buffer, '{}: {}'.format(NAME, message))
+    weechat.prnt(buffer, '{}'.format(message))
 
 
 if VERBOSE:
