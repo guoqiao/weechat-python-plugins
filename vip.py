@@ -26,7 +26,7 @@ def main():
         weechat.hook_line(
             'formatted',  # buffer_type: formatted|free|*
             '*',  # buffer_name, any
-            'irc_privmsg,nick_{}'.format(nick),  # filter tags on line
+            'irc_privmsg+nick_{}'.format(nick),  # filter tags on line, ',' for OR, '+' for AND
             'on_line',  # callback name
             nick,  # callback data
         )
