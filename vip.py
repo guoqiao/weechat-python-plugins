@@ -3,7 +3,7 @@ from os.path import basename
 import weechat
 
 WEECHAT_PLUGIN_NAME = basename(__file__).rsplit('.', maxsplit=1)[0]
-WEECHAT_PLUGIN_DESCRIPTION = "highlight messages from vip"
+WEECHAT_PLUGIN_DESCRIPTION = "highlight messages from vip (/set plugins.var.python.vip.nicks nick1,nick2)"
 WEECHAT_PLUGIN_AUTHOR = "guoqiao <guoqiao@gmail.com>"
 WEECHAT_PLUGIN_VERSION = "20200401"
 WEECHAT_PLUGIN_LICENSE = "GPL3"
