@@ -17,6 +17,7 @@ BUFFER_IS_BOOTSTACK_PD = 'irc.{}.{}'.format(IRC_SERVER_NAME, IRC_CHANNEL_NAME)
 
 TRIGGERED_IDS = set()
 
+
 def seconds(n):
     return n * 1000
 
@@ -62,9 +63,32 @@ def on_bs_pd_bot(data, line):
     PN6JZ6M *UNACKNOWLEDGED* CRITICAL: 'bootstack-libertyglobal-schiphol-openstack-service-checks-0-contrail_analytics_alarms' on 'bootstack-libertyglobal-schiphol-openstack-service-checks-0' @ andrea, guoqiao [BootStack Alerts - LibertyGlobal Schiphol] 
 
     please note that the actions are surrounded by color code.
+
+    the line object:
+
+    {
+        "tags": "irc_privmsg,notify_message,prefix_nick_lightcyan,nick_bs-pd-bot,host_bs-pd-bot@bs-pd-bot.bootstack.canonical.com,log1",
+        "prefix": "\u0019F10\u0019F14bs-pd-bot",
+        "displayed": "1",
+        "message": "P0LYK43 |_ CHECK_NRPE: Socket timeout after 15 seconds.",
+        "buffer_type": "formatted",
+        "str_time": "\u00190204\u001903-\u00190206\u001903 \u00190200\u001903:\u00190225\u001903:\u00190229\u001928Z",
+        "buffer_name": "irc.canonical.#is-bootstack-pd",
+        "date": "1586132729",
+        "tags_count": "6",
+        "date_printed": "1586132729",
+        "notify_level": "1",
+        "buffer": "0x56479e5df1b0",
+        "highlight": "0",
+        "y": "-1"
+    }
+
+
+
     """
     weechat.prnt('', pretty_json(line))
     message = de_color(line['message'])
+    str_buf_ptr = line['buffer']
     words = message.split(maxsplit=2)
     if len(words) == 3:
         alert_id, action, content = words
@@ -72,21 +96,22 @@ def on_bs_pd_bot(data, line):
             weechat.prnt('', message)
             if action in ACTIONS:  # turn into TRIGGERED status
                 TRIGGERED_IDS.add(alert_id)
-                weechat.prnt('', 'add {}'.format(alert_id))
+                weechat.prnt(str_buf_ptr, 'add {}'.format(alert_id))
             else:
                 TRIGGERED_IDS.discard(alert_id)
-                weechat.prnt('', 'discard {}'.format(alert_id))
-            weechat.prnt('', 'current queue: {}'.format(TRIGGERED_IDS))
+                weechat.prnt(str_buf_ptr, 'discard {}'.format(alert_id))
+            weechat.prnt(str_buf_ptr, 'current: {}'.format(TRIGGERED_IDS))
 
 
 def on_timer(data, remaining_calls):
-    weechat.prnt('', 'timer triggered, current queue: {}'.format(TRIGGERED_IDS))
+    str_buf_ptr = weechat.buffer_search('==', BUFFER_IS_BOOTSTACK_PD)
     if TRIGGERED_IDS:
-        str_buf_ptr = weechat.buffer_search('==', BUFFER_IS_BOOTSTACK_PD)
         cmd = 'z 4 {}'.format(' '.join(TRIGGERED_IDS))
         MODE.command(str_buf_ptr, cmd)  # ack mine quiet, TODO: zmq 1
         TRIGGERED_IDS.clear()
-        weechat.prnt('', 'queue cleared')
+        weechat.prnt(str_buf_ptr, 'queue cleared')
+    else:
+        weechat.prnt(str_buf_ptr, 'timer: queue is empty')
     return weechat.WEECHAT_RC_OK
 
 
