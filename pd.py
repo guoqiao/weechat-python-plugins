@@ -2,11 +2,18 @@
 
 import re
 import json
+from os.path import basename
+
 import weechat
+
+DESC = "auto snooze pagerduty alerts"
+
+NAME = basename(__file__).rsplit('.', maxsplit=1)[0]
 
 ACTIONS = ('TRIGGERED', 'UNACKNOWLEDGED', 'ASSIGNED', 'ESCALATED')
 IRC_SERVER_NAME = 'canonical'
-BUFFER_IS_BOOTSTACK_PD = 'irc.{}.#is-bootstack-pd'.format(IRC_SERVER_NAME)
+IRC_CHANNEL_NAME = '#is-bootstack-pd'
+BUFFER_IS_BOOTSTACK_PD = 'irc.{}.{}'.format(IRC_SERVER_NAME, IRC_CHANNEL_NAME)
 
 TRIGGERED_IDS = set()
 
@@ -84,8 +91,7 @@ def on_timer(data, remaining_calls):
 
 
 def main():
-    weechat.register("snooze", "guoqiao", "20200301", "MIT", "auto snooze pagerduty alerts", "", "")
-    weechat.prnt("", "snooze.py loaded")
+    weechat.register(NAME, "guoqiao", "20200406", "MIT", DESC, "", "")
     weechat.hook_timer(
         MODE.interval,  # interval in ms
         1,  # align_second
