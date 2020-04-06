@@ -94,6 +94,9 @@ class WeeChatPlugin(argparse.ArgumentParser):
     def get_option_str(self, option):
         return weechat.config_string(self.get_option(option))
 
+    def remove_color(self, text):
+        return weechat.string_remove_color(text, '')
+
 
 def weechat_plugin_return_code(func):
     def hook_command(data, buffer, args):
