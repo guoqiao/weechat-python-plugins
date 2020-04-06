@@ -19,14 +19,16 @@ def main():
         '',  # shutdown_function name
         '',  # charset, defaults to UTF-8 if blank
     )
-    vips = weechat.config_get_plugin('python.vip.vips')
-    for vip in vips.split(','):
+    # prefix 'plugins.var.python.vip' will be added by api
+    nicks = weechat.config_get_plugin('nicks')
+    weechat.prnt('', 'vip nicks: {}'.format(nicks))
+    for nick in nicks.split(','):
         weechat.hook_line(
             'formatted',  # buffer_type: formatted|free|*
             '*',  # buffer_name, any
-            'irc_privmsg,nick_{}'.format(vip),  # filter tags on line
+            'irc_privmsg,nick_{}'.format(nick),  # filter tags on line
             'on_line',  # callback name
-            vip,  # callback data
+            nick,  # callback data
         )
 
 
