@@ -22,6 +22,7 @@ TRIGGERED_IDS = set()
 
 
 def info(message, buffer=''):
+    message = '{}: {}'.format(WEECHAT_PLUGIN_NAME, message)
     weechat.prnt(buffer, message)
 
 
