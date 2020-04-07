@@ -6,9 +6,12 @@ from os.path import basename
 
 import weechat
 
-DESC = "auto snooze pagerduty alerts"
-
-NAME = basename(__file__).rsplit('.', maxsplit=1)[0]
+WEECHAT_PLUGIN_NAME = basename(__file__).rsplit('.', maxsplit=1)[0]
+WEECHAT_PLUGIN_DESCRIPTION = "auto snooze pagerduty alerts"
+WEECHAT_PLUGIN_AUTHOR = "guoqiao <guoqiao@gmail.com>"
+WEECHAT_PLUGIN_VERSION = "20200408"
+WEECHAT_PLUGIN_LICENSE = "GPL3"
+WEECHAT_PLUGIN_DEBUG = False
 
 ACTIONS = ('TRIGGERED', 'UNACKNOWLEDGED', 'ASSIGNED', 'ESCALATED')
 IRC_SERVER_NAME = 'canonical'
@@ -16,6 +19,15 @@ IRC_CHANNEL_NAME = '#is-bootstack-pd'
 BUFFER_IS_BOOTSTACK_PD = 'irc.{}.{}'.format(IRC_SERVER_NAME, IRC_CHANNEL_NAME)
 
 TRIGGERED_IDS = set()
+
+
+def info(message, buffer=''):
+    weechat.prnt(buffer, message)
+
+
+def debug(message, buffer=''):
+    if WEECHAT_PLUGIN_DEBUG:
+        info(message, buffer=buffer)
 
 
 def seconds(n):
@@ -57,7 +69,7 @@ def de_color(text):
     return weechat.string_remove_color(text, '')
 
 
-def on_bs_pd_bot(data, line):
+def on_line(data, line):
     """
     target line example:
     PN6JZ6M *UNACKNOWLEDGED* CRITICAL: 'bootstack-libertyglobal-schiphol-openstack-service-checks-0-contrail_analytics_alarms' on 'bootstack-libertyglobal-schiphol-openstack-service-checks-0' @ andrea, guoqiao [BootStack Alerts - LibertyGlobal Schiphol] 
@@ -83,24 +95,22 @@ def on_bs_pd_bot(data, line):
         "y": "-1"
     }
 
-
-
     """
-    weechat.prnt('', pretty_json(line))
+    debug(pretty_json(line))
     message = de_color(line['message'])
     str_buf_ptr = line['buffer']
     words = message.split(maxsplit=2)
     if len(words) == 3:
         alert_id, action, content = words
         if MODE.is_mine(content):
-            weechat.prnt('', message)
+            debug(message)
             if action in ACTIONS:  # turn into TRIGGERED status
                 TRIGGERED_IDS.add(alert_id)
-                weechat.prnt(str_buf_ptr, 'add {}'.format(alert_id))
+                info('add {}'.format(alert_id), buffer=str_buf_ptr)
             else:
                 TRIGGERED_IDS.discard(alert_id)
-                weechat.prnt(str_buf_ptr, 'discard {}'.format(alert_id))
-            weechat.prnt(str_buf_ptr, 'current: {}'.format(TRIGGERED_IDS))
+                info('discard {}'.format(alert_id), buffer=str_buf_ptr)
+            info('current: {}'.format(TRIGGERED_IDS), buffer=str_buf_ptr)
 
 
 def on_timer(data, remaining_calls):
@@ -109,14 +119,22 @@ def on_timer(data, remaining_calls):
         cmd = 'z 4 {}'.format(' '.join(TRIGGERED_IDS))
         MODE.command(str_buf_ptr, cmd)  # ack mine quiet, TODO: zmq 1
         TRIGGERED_IDS.clear()
-        weechat.prnt(str_buf_ptr, 'queue cleared')
+        info('queue cleared', buffer=str_buf_ptr)
     else:
-        weechat.prnt(str_buf_ptr, 'timer: queue is empty')
+        debug('pd timer: queue is empty', buffer=str_buf_ptr)
     return weechat.WEECHAT_RC_OK
 
 
 def main():
-    weechat.register(NAME, "guoqiao", "20200406", "MIT", DESC, "", "")
+    weechat.register(
+        WEECHAT_PLUGIN_NAME,
+        WEECHAT_PLUGIN_AUTHOR,
+        WEECHAT_PLUGIN_VERSION,
+        WEECHAT_PLUGIN_LICENSE,
+        WEECHAT_PLUGIN_DESCRIPTION,
+        '',  # shutdown_function name
+        '',  # charset, defaults to UTF-8 if blank
+    )
     weechat.hook_timer(
         MODE.interval,  # interval in ms
         1,  # align_second
@@ -127,8 +145,8 @@ def main():
     weechat.hook_line(
         'formatted',  # buffer_type: formatted|free|*
         BUFFER_IS_BOOTSTACK_PD,  # buffer_name
-        'irc_privmsg,nick_bs-pd-bot',  # filter tags on line
-        'on_bs_pd_bot',  # callback name
+        'nick_bs-pd-bot',  # filter tags on line
+        'on_line',  # callback name
         '',  # callback data
     )
 
