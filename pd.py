@@ -13,11 +13,11 @@ WEECHAT_PLUGIN_VERSION = "20200408"
 WEECHAT_PLUGIN_LICENSE = "GPL3"
 WEECHAT_PLUGIN_DEBUG = False
 
-ACTIONS = ('TRIGGERED', 'UNACKNOWLEDGED', 'ASSIGNED', 'ESCALATED')
-IRC_SERVER_NAME = 'canonical'
-IRC_CHANNEL_NAME = '#is-bootstack-pd'
-BUFFER_IS_BOOTSTACK_PD = 'irc.{}.{}'.format(IRC_SERVER_NAME, IRC_CHANNEL_NAME)
+IRC_SERVER = 'canonical'
+IRC_CHANNEL = '#is-bootstack-pd'
+IRC_NICK = 'bs-pd-bot'
 
+ACTIONS = ('TRIGGERED', 'UNACKNOWLEDGED', 'ASSIGNED', 'ESCALATED')
 TRIGGERED_IDS = set()
 
 
@@ -40,7 +40,7 @@ def minutes(n):
 
 
 def get_username():
-    return weechat.config_string(weechat.config_get("irc.server.{}.username".format(IRC_SERVER_NAME)))
+    return weechat.config_string(weechat.config_get("irc.server.{}.username".format(IRC_SERVER)))
 
 
 class DebugMode:
@@ -114,10 +114,10 @@ def on_line(data, line):
 
 
 def on_timer(data, remaining_calls):
-    str_buf_ptr = weechat.buffer_search('==', BUFFER_IS_BOOTSTACK_PD)
+    str_buffer_ptr = weechat.buffer_search('==', data['buffer_name'])
     if TRIGGERED_IDS:
         cmd = 'z 4 {}'.format(' '.join(TRIGGERED_IDS))
-        MODE.command(str_buf_ptr, cmd)  # ack mine quiet, TODO: zmq 1
+        MODE.command(str_buffer_ptr, cmd)  # ack mine quiet, TODO: zmq 1
         TRIGGERED_IDS.clear()
         info('queue cleared')
     else:
@@ -135,17 +135,18 @@ def main():
         '',  # shutdown_function name
         '',  # charset, defaults to UTF-8 if blank
     )
+    buffer_name = 'irc.{}.{}'.format(IRC_SERVER, IRC_CHANNEL)
     weechat.hook_timer(
-        MODE.interval,  # interval in ms
+        seconds(67),
         1,  # align_second
         0,  # max_calls, 0: no limit
         'on_timer',  # callback_name,
-        '',  # callback_data,
+        {'buffer_name': buffer_name},  # callback_data,
     )
     weechat.hook_line(
         'formatted',  # buffer_type: formatted|free|*
-        BUFFER_IS_BOOTSTACK_PD,  # buffer_name
-        'nick_bs-pd-bot',  # filter tags on line
+        buffer_name,  # buffer_name
+        'nick_{}'.format(IRC_NICK),  # filter tags on line
         'on_line',  # callback name
         '',  # callback data
     )
