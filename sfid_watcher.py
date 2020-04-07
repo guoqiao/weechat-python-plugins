@@ -10,7 +10,7 @@ WEECHAT_PLUGIN_VERSION = "20200408"
 WEECHAT_PLUGIN_LICENSE = "GPL3"
 
 # sf id is a 6-digit number starts with 2, e.g: 272160
-SF_ID_RE = re.compile(r'(2\d{5})\b')
+SF_ID_RE = re.compile(r'\D0{0,2}(2\d{5})\b')
 
 
 def main():
