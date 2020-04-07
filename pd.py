@@ -99,7 +99,6 @@ def on_line(data, line):
     """
     debug(pretty_json(line))
     message = de_color(line['message'])
-    str_buf_ptr = line['buffer']
     words = message.split(maxsplit=2)
     if len(words) == 3:
         alert_id, action, content = words
@@ -107,11 +106,11 @@ def on_line(data, line):
             debug(message)
             if action in ACTIONS:  # turn into TRIGGERED status
                 TRIGGERED_IDS.add(alert_id)
-                info('add {}'.format(alert_id), buffer=str_buf_ptr)
+                info('add {}'.format(alert_id))
             else:
                 TRIGGERED_IDS.discard(alert_id)
-                info('discard {}'.format(alert_id), buffer=str_buf_ptr)
-            info('current: {}'.format(TRIGGERED_IDS), buffer=str_buf_ptr)
+                info('discard {}'.format(alert_id))
+            info('current: {}'.format(TRIGGERED_IDS))
 
 
 def on_timer(data, remaining_calls):
@@ -120,9 +119,9 @@ def on_timer(data, remaining_calls):
         cmd = 'z 4 {}'.format(' '.join(TRIGGERED_IDS))
         MODE.command(str_buf_ptr, cmd)  # ack mine quiet, TODO: zmq 1
         TRIGGERED_IDS.clear()
-        info('queue cleared', buffer=str_buf_ptr)
+        info('queue cleared')
     else:
-        debug('pd timer: queue is empty', buffer=str_buf_ptr)
+        info('queue empty')
     return weechat.WEECHAT_RC_OK
 
 
