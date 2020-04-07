@@ -114,7 +114,8 @@ def on_line(data, line):
 
 
 def on_timer(data, remaining_calls):
-    str_buffer_ptr = weechat.buffer_search('==', data['buffer_name'])
+    buffer_name = data
+    str_buffer_ptr = weechat.buffer_search('==', buffer_name)
     if TRIGGERED_IDS:
         cmd = 'z 4 {}'.format(' '.join(TRIGGERED_IDS))
         MODE.command(str_buffer_ptr, cmd)  # ack mine quiet, TODO: zmq 1
@@ -141,7 +142,7 @@ def main():
         1,  # align_second
         0,  # max_calls, 0: no limit
         'on_timer',  # callback_name,
-        {'buffer_name': buffer_name},  # callback_data,
+        buffer_name,  # callback_data, must be str
     )
     weechat.hook_line(
         'formatted',  # buffer_type: formatted|free|*
