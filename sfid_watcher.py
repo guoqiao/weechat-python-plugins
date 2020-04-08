@@ -53,9 +53,12 @@ def on_line(data, line):
         "y": "-1"
     }
     """
-    for sfid in SF_ID_RE.findall(line['message']):
-        url = 'https://portal.admin.canonical.com/bootstack/cases/{}'.format(sfid)
-        weechat.prnt(line['buffer'], url)
+    message = line['message']
+    url_base = 'https://portal.admin.canonical.com/bootstack/cases'
+    if url_base not in message:
+        for sfid in SF_ID_RE.findall():
+            url = '{}/{}'.format(url_base, sfid)
+            weechat.prnt(line['buffer'], url)
     return weechat.WEECHAT_RC_OK
 
 
