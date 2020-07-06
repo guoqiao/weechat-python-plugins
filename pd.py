@@ -138,7 +138,7 @@ def main():
     )
     buffer_name = 'irc.{}.{}'.format(IRC_SERVER, IRC_CHANNEL)
     weechat.hook_timer(
-        seconds(67),
+        seconds(107),
         1,  # align_second
         0,  # max_calls, 0: no limit
         'on_timer',  # callback_name,
