@@ -117,7 +117,7 @@ def on_timer(data, remaining_calls):
     buffer_name = data
     str_buffer_ptr = weechat.buffer_search('==', buffer_name)
     if TRIGGERED_IDS:
-        cmd = 'zm 1'
+        cmd = 'zm 2'
         MODE.command(str_buffer_ptr, cmd)
         TRIGGERED_IDS.clear()
         info('queue cleared')
